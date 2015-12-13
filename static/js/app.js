@@ -44,19 +44,50 @@ premiereApp.service('fileUpload', ['$http', function ($http) {
 
 premiereApp.controller('premiereCtrl', ['$scope', 'fileUpload', function($scope, fileUpload, movies){
     $scope.xmlUploader = true;
+    $scope.AllMovies = true;
+    $scope.Pagination = true;
+    $scope.Movies = [];
+
+    fileUpload.getAll(function(cb) {
+        angular.forEach(cb, function(values) {
+            $scope.Movies.push(values);
+        });
+    });
 
     $scope.uploadFile = function(){
         $scope.xmlUploader = false;
+        $scope.xmlUploadSpinner = true;
         var file = $scope.file;
         var uploadUrl = "http://52.25.116.171:8080/uploadXML";
 
         fileUpload.uploadFileToUrl(function(cb) {
+            $scope.xmlUploader = true;
+            $scope.xmlUploadSpinner = false;
+            $scope.Movies = [];
             if (cb.success === "0"){
                 fileUpload.getAll(function(cb) {
-                    $scope.Movies = cb;
-                    $scope.allMovies = true;
+                    angular.forEach(cb, function(values) {
+                        $scope.Movies.push(values); 
+                    });
                 }); 
             }
         }, file, $scope.name, uploadUrl);
+    };
+
+    $scope.showDetails = function(id, Title, MD5, Director, ReleaseDate, Length, Type, Description) {
+        $scope.AllMovies = false;
+        $scope.Pagination = false;
+        $scope.MovieDetails = true;
+
+        $scope.details = {
+            id : id,
+            Title : Title,
+            MD5 : MD5,
+            Director : Director,
+            ReleaseDate : ReleaseDate,
+            Length : Length,
+            Type : Type,
+            Description : Description,
+        };
     };
 }]);

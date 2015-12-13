@@ -6,38 +6,102 @@
     <script src="static/vendors/js/angular-utils-pagination/dirPagination.js"></script>
     <script src="static/js/app.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/css/app.css">
+    <link rel="stylesheet" href="static/vendors/css/font-awesome-4.5.0/css/font-awesome.css">
 </head>
 <body ng-app="premiereApp">
-    <div class="container" ng-controller="premiereCtrl">
-        <div class="row">
-            <h1>Hello Premiere Digital!</h1>
-        </div>
-        <div class="row" ng-show="xmlUploader">
-            <input class="input-xlarge" type="file" file-model="file"/><br />
-            <input class="form-control" type="text" ng-model="name"><br />
-            <button class="btn btn-primary" ng-click="uploadFile()">upload me</button>
-        </div>
+    <div ng-controller="premiereCtrl">
+        <nav class="navbar navbar-default container">
+            <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Premiere Digital</a>
+            </div>
 
-        <div class="row" ng-show="allMovies">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                <li><a href="/">All Movies</a></li>
+                <li><a href="https://github.com/briancoxen/premieredigital">GitHub FE</a></li>
+                <li><a href="https://github.com/briancoxen/premieredigitalJava">GitHub BE</a></li>
+            </ul>
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                </div>
+            </form>
+        </nav>
+        <div class="container">
+        <div class="row panel panel-default">
             <table class="table table-bordered">
-                <tbody>
+                 <thead>
+                     <tr>
+                          <th colspan="3">
+                              <div ng-show="xmlUploader">
+                                  <form class="navbar-form navbar-left container">
+                                      <div class="form-group">
+                                          <input class="form-control" type="file" file-model="file"/>
+                                          <input class="form-control" type="text" ng-model="name" placeholder="File Name"/>
+                                      </div>
+                                      <button class="btn btn-default" ng-click="uploadFile()">Upload XML File</button>
+                                  </form>
+                              </div>
+                              <div ng-show="xmlUploadSpinner">
+                                  <center><div class="loader"></div></center>
+                              </div>
+                          </th>
+                     </tr>
+                </thead>
+                <tbody ng-show="AllMovies">
                     <tr>
                         <th>Title</th>
                         <th>MD5 Checksum</th>
-                        <th>Meta</th>
+                        <th>ReleaseDate</th>
+                        <th>Details</th>
                     </tr>
 
-                    <tr dir-paginate="movie in Movies | itemsPerPage: 10">
+                    <tr dir-paginate="movie in Movies | filter: search | orderBy: 'Title' | itemsPerPage: 10">
                         <td>{{ movie.Title }}</td>
                         <td>{{ movie.MD5 }}</td>
-                        <td>{{ movie.Meta }}</td>
+                        <td>{{ movie.ReleaseDate }}</td>
+                        <td><i class="fa fa-eye" ng-click="showDetails(movie.id, movie.Title, movie.MD5, movie.Director, movie.ReleaseDate, movie.Length, movie.Type, movie.Description)"></i></td>
                     </tr>
                 </tbody>
 
-                <tfoot>
-                    <td colspan="3"><dir-pagination-controls></dir-pagination-controls></td>
+                <tbody ng-show="MovieDetails">
+                    <tr>
+                        <th colspan="3">{{ details.Title }}</th>
+                    </tr>
+                    <tr>
+                        <td>Director</td>
+                        <td colspan="2">{{ details.Director }}</td>
+                    </tr>
+                    <tr>
+                        <td>Released</td>
+                        <td colspan="2">{{ details.ReleaseDate }}</td>
+                    </tr>
+		    <tr>
+                        <td>Description</td>
+                        <td colspan="2">{{ details.Description }}</td>
+                    </tr>
+                    <tr>
+                        <td>Length</td>
+                        <td colspan="2">{{ details.Length }}</td>
+                    </tr>
+                    <tr>
+                        <td>Director</td>
+                        <td colspan="2">{{ details.Type }}</td>
+                    </tr>
+                    <tr>
+                        <td>File</td>
+                        <td>MD5: {{ details.MD5 }}</td>
+                        <td>{{ details.File }}</td>
+                    </tr>
+                </tbody>
+
+                <tfoot ng-show="Pagination">
+                    <td colspan="4"><dir-pagination-controls></dir-pagination-controls></td>
                 </tfoot>
             </table>
+        </div>
         </div>
     </div>
 </body>
