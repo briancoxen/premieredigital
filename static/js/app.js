@@ -1,4 +1,4 @@
-var premiereApp = angular.module('premiereApp', []);
+var premiereApp = angular.module('premiereApp', ['angularUtils.directives.dirPagination']);
 
 premiereApp.directive('fileModel', ['$parse', function ($parse) {
     return {
@@ -17,7 +17,7 @@ premiereApp.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 premiereApp.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, name, uploadUrl){
+    this.uploadFileToUrl = function(cb, file, name, uploadUrl){
         var fd = new FormData();
         fd.append('file', file);
         fd.append('name', name);
@@ -26,16 +26,16 @@ premiereApp.service('fileUpload', ['$http', function ($http) {
             headers: {'Content-Type': undefined}
         })
         .success(function(data){
-            return data;
+            cb(data);
         })
         .error(function(){
         });
     }
 
-    this.getAll = function(){
+    this.getAll = function(cb){
         $http.get("http://52.25.116.171:8080/getMovieData")
         .success(function(data){
-            console.log(data);
+            cb(data);
         })
         .error(function(){
         });
@@ -48,10 +48,15 @@ premiereApp.controller('premiereCtrl', ['$scope', 'fileUpload', function($scope,
     $scope.uploadFile = function(){
         $scope.xmlUploader = false;
         var file = $scope.file;
-        console.log('file is ' );
-        console.dir(file);
         var uploadUrl = "http://52.25.116.171:8080/uploadXML";
-        fileUpload.uploadFileToUrl(file, $scope.name, uploadUrl);
-        fileUpload.getAll(); 
+
+        fileUpload.uploadFileToUrl(function(cb) {
+            if (cb.success === "0"){
+                fileUpload.getAll(function(cb) {
+                    $scope.Movies = cb;
+                    $scope.allMovies = true;
+                }); 
+            }
+        }, file, $scope.name, uploadUrl);
     };
 }]);

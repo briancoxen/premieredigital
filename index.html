@@ -3,18 +3,41 @@
 <title>Premiere Digital</title>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js"></script>
-    <script src="static/vendors/js/ng-file-upload-bower-10.1.9/ng-file-upload-shim.min.js"></script>
-    <script src="static/vendors/js/ng-file-upload-bower-10.1.9/ng-file-upload.min.js"></script>
+    <script src="static/vendors/js/angular-utils-pagination/dirPagination.js"></script>
     <script src="static/js/app.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body ng-app="premiereApp">
-    <div ng-controller="premiereCtrl">
-        <h1>Hello Premiere Digital!</h1>
-        <div ng-show="xmlUploader">
-            <input type="file" file-model="file"/>
-            <br /> Name: <input type="text" ng-model="name"><br />
-            <button ng-click="uploadFile()">upload me</button>
+    <div class="container" ng-controller="premiereCtrl">
+        <div class="row">
+            <h1>Hello Premiere Digital!</h1>
+        </div>
+        <div class="row" ng-show="xmlUploader">
+            <input class="input-xlarge" type="file" file-model="file"/><br />
+            <input class="form-control" type="text" ng-model="name"><br />
+            <button class="btn btn-primary" ng-click="uploadFile()">upload me</button>
+        </div>
+
+        <div class="row" ng-show="allMovies">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Title</th>
+                        <th>MD5 Checksum</th>
+                        <th>Meta</th>
+                    </tr>
+
+                    <tr dir-paginate="movie in Movies | itemsPerPage: 10">
+                        <td>{{ movie.Title }}</td>
+                        <td>{{ movie.MD5 }}</td>
+                        <td>{{ movie.Meta }}</td>
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                    <td colspan="3"><dir-pagination-controls></dir-pagination-controls></td>
+                </tfoot>
+            </table>
         </div>
     </div>
 </body>
