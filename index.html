@@ -107,7 +107,10 @@
                                 <button class="btn btn-default" ng-click="uploadMediaFile(details.id, details.MD5)">Upload Media</button>
                             </form>
                         </td>
-                        <td ng-show="details.File !== null"><a href="{{ details.File }}">Download</a></td>
+                        <td ng-show="details.File !== null">
+                            <a href="{{ details.File }}" download>Download</a><br />
+                            <button class="btn btn-default" ng-click="deleteFile(details.id)">Delete File</button>
+                        </td>
                     </tr>
                 </tbody>
 
