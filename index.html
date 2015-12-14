@@ -19,7 +19,7 @@
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                <li><a href="/">All Movies</a></li>
+                <li><a href ng-click="getAllData()">All Movies</a></li>
                 <li><a href="https://github.com/briancoxen/premieredigital">GitHub FE</a></li>
                 <li><a href="https://github.com/briancoxen/premieredigitalJava">GitHub BE</a></li>
             </ul>
@@ -39,13 +39,15 @@
                                   <form class="navbar-form navbar-left container">
                                       <div class="form-group">
                                           <input class="form-control" type="file" file-model="file"/>
-                                          <input class="form-control" type="text" ng-model="name" placeholder="File Name"/>
                                       </div>
-                                      <button class="btn btn-default" ng-click="uploadFile()">Upload XML File</button>
+                                      <button class="btn btn-default" ng-click="uploadXMLFile()">Upload XML File</button>
                                   </form>
                               </div>
                               <div ng-show="xmlUploadSpinner">
                                   <center><div class="loader"></div></center>
+                              </div>
+                              <div ng-show="detailsPage">
+                                  <center><h3>Movie Details</h3></center>
                               </div>
                           </th>
                      </tr>
@@ -54,7 +56,7 @@
                     <tr>
                         <th>Title</th>
                         <th>MD5 Checksum</th>
-                        <th>ReleaseDate</th>
+                        <th>Release Date</th>
                         <th>Details</th>
                     </tr>
 
@@ -62,7 +64,7 @@
                         <td>{{ movie.Title }}</td>
                         <td>{{ movie.MD5 }}</td>
                         <td>{{ movie.ReleaseDate }}</td>
-                        <td><i class="fa fa-eye" ng-click="showDetails(movie.id, movie.Title, movie.MD5, movie.Director, movie.ReleaseDate, movie.Length, movie.Type, movie.Description)"></i></td>
+                        <td><i class="fa fa-eye" ng-click="showDetails(movie.id, movie.Title, movie.MD5, movie.Director, movie.ReleaseDate, movie.Length, movie.Type, movie.Description, movie.File)"></i></td>
                     </tr>
                 </tbody>
 
@@ -87,18 +89,30 @@
                         <td colspan="2">{{ details.Length }}</td>
                     </tr>
                     <tr>
-                        <td>Director</td>
+                        <td>Type</td>
                         <td colspan="2">{{ details.Type }}</td>
                     </tr>
                     <tr>
                         <td>File</td>
-                        <td>MD5: {{ details.MD5 }}</td>
-                        <td>{{ details.File }}</td>
+                        <td>MD5 Checksum: {{ details.MD5 }}</td>
+                        <td ng-show="details.File === null">
+                            <div class="alert alert-danger" ng-show="error">{{ errorMsg }}</div>
+                            <div ng-show="mediaUploadSpinner">
+                                  <center><div class="loader"></div></center>
+                            </div>
+                            <form class="navbar-form navbar-right container" ng-show="mediaUploadForm">
+                                <div class="form-group">
+                                    <input class="form-control" type="file" file-model="file"/>
+                                </div>
+                                <button class="btn btn-default" ng-click="uploadMediaFile(details.id, details.MD5)">Upload Media</button>
+                            </form>
+                        </td>
+                        <td ng-show="details.File !== null"><a href="{{ details.File }}">Download</a></td>
                     </tr>
                 </tbody>
 
                 <tfoot ng-show="Pagination">
-                    <td colspan="4"><dir-pagination-controls></dir-pagination-controls></td>
+                    <td colspan="4"><div align="right"><dir-pagination-controls></dir-pagination-controls></div></td>
                 </tfoot>
             </table>
         </div>
