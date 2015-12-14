@@ -55,6 +55,20 @@ premiereApp.service('premiereService', ['$http', function ($http) {
         .error(function(){
         });
     }
+
+    this.deleteFile = function(cb, id){
+        var fd = new FormData();
+        fd.append('id', id);
+        $http.post("http://52.25.116.171:8080/deleteFile", fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined} 
+        })
+        .success(function(data){
+            cb(data);
+        })
+        .error(function(){
+        });
+    }
 }]);
 
 premiereApp.controller('premiereCtrl', ['$scope', 'premiereService', function($scope, premiereService, movies){
@@ -127,6 +141,17 @@ premiereApp.controller('premiereCtrl', ['$scope', 'premiereService', function($s
                 $scope.errorMsg = "The uploaded file's checksum did not match, please try again! " + cb.error;
             }
         }, file, id, checksum, uploadUrl);
+    };
+
+    $scope.deleteFile = function(id){
+        premiereService.deleteFile(function(cb) {
+            $scope.mediaUploadSpinner = false;
+
+            if (cb.success === "0"){
+                $scope.mediaUploadForm = true;
+                $scope.details.File = null;
+            } 
+        }, id);
     };
 
     $scope.showDetails = function(id, Title, MD5, Director, ReleaseDate, Length, Type, Description, File) {
